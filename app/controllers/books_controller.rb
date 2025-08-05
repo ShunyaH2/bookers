@@ -1,4 +1,53 @@
 class BooksController < ApplicationController
-  def books
+  
+  def create
+    @book = Book.new(book_params)
+    if @book.save
+      flash[:notice] = "Book was successfully created."
+      redirect_to book_path(@book)
+    else
+      flash[:notice] = "Title can't be blank"
+      flash[:notice] = "Body can't be blank"
+      @books = Book.all
+      render :index
+    end
+  end
+
+  def index
+    @books = Book.all
+    @book = Book.new
+  end
+
+  def show
+    @book = Book.find(params[:id])
+  end
+
+  def edit
+    @book =Book.find(params[:id])
+  end
+
+  def destroy
+    book = Book.find(params[:id])
+    book.destroy
+    redirect_to href="/bookers/books"
+  end
+
+  def update
+    @book = Book.find(params[:id])
+    if @book.update(book_params)
+      flash[:notice] = "Book was successfully updated."
+      redirect_to book_path(@book)
+    else
+      flash[:notice] = "Title can't be blank"
+      flash[:notice] = "Body can't be blank"
+      @books = Book.all
+      render :edit
+    end  
+  end
+
+  private
+  # ストロングパラメータ
+  def book_params
+    params.require(:book).permit(:title, :body)
   end
 end
